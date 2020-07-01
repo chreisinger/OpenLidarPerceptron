@@ -39,6 +39,14 @@ class DatasetTemplate(torch_data.Dataset):
     def mode(self):
         return 'train' if self.training else 'test'
 
+    def __getstate__(self):
+        d = dict(self.__dict__)
+        del d['logger']
+        return d
+
+    def __setstate__(self, d):
+        self.__dict__.update(d)
+
     def __len__(self):
         raise NotImplementedError
 
@@ -93,7 +101,7 @@ class DatasetTemplate(torch_data.Dataset):
         data_dict = self.data_processor.forward(
             data_dict=data_dict
         )
-        data_dict.pop('gt_names')
+        data_dict.pop('gt_names', None)
 
         return data_dict
 
